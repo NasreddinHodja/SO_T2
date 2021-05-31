@@ -1,0 +1,88 @@
+#+TITLE: 7c - Uso dos comandos fork() e exec()
+
+* prog1
+#+begin_src c :exports both
+#include <stdio.h>
+#include <wait.h>
+#include <unistd.h>
+#include <stdlib.h>
+
+#define MAX_MSG 128
+
+int main(void) {
+    int status, id, j;
+    int pfd[2], cfd[2], n_bytes;
+    char inbuf[MAX_MSG];
+
+    printf("PID: %lu\n", getpid());
+
+
+    if(pipe(pfd) < 0)
+        exit(1);
+    if(pipe(cfd) < 0)
+        exit(1);
+
+    if((id = fork()) < 0) {
+        exit(1);
+    } else if (id > 0) {
+        close(cfd[1]);
+        printf("PID pai: %lu | PID filho: %lu\n", getpid(), id);
+
+        char msg_to_child[MAX_MSG] = "hello, child";
+        write(pfd[1], msg_to_child, MAX_MSG);
+        printf("mensagem para o filho: %s\n", msg_to_child);
+
+        while((n_bytes = read(cfd[0], inbuf, MAX_MSG)) < 0)
+            sleep(0.5);
+        printf("mensagem recebida do filho: %s\n", inbuf);
+
+        while((n_bytes = read(cfd[0], inbuf, MAX_MSG)) < 0)
+            sleep(0.5);
+        printf("mensagem recebida do filho: %s\n", inbuf);
+
+        wait(NULL);
+
+        printf("filho terminou de executar, pai irá encerrar\n");
+        close(pfd[1]);
+    } else {
+        // todo print do filho sera prefixado com "***"
+        // para diferencia-lo de um print do pai
+        close(pfd[1]);
+        printf("*** PID: %lu | PPID: %lu\n", getpid(), getppid());
+
+        while((n_bytes = read(pfd[0], inbuf, MAX_MSG)) < 0)
+            sleep(0.5);
+        printf("*** mensagem recebida do pai: %s\n", inbuf);
+
+        char msg_to_parent[MAX_MSG] = "hello, parent";
+        write(cfd[1], msg_to_parent, MAX_MSG);
+
+        for(j = 0; j <= 10000; j++);
+        sprintf(msg_to_parent, "j = %d", j);
+        write(cfd[1], msg_to_parent, MAX_MSG);
+
+        close(cfd[1]);
+
+        execl("/Bin/ls", "ls", NULL);
+    }
+
+    exit(0);
+}
+#+end_src
+
+#+results:
+: PID: 1799794
+: PID pai: 1799794 | PID filho: 1799795
+: mensagem para o filho: hello, child
+: *** PID: 1799795 | PPID: 1799794
+: *** mensagem recebida do pai: hello, child
+: mensagem recebida do filho: hello, parent
+: mensagem recebida do filho: j = 10001
+: filho terminou de executar, pai irá encerrar
+
+*OBS*: a ordem da linhas na saída pode variar, uma vez que os dois processos estão executando juntos
+
++ podemos ver pela saída que não há a saída do comando ~ls~
++ isto se dá pelo fato de que o caminho ~/Bin/ls~ não existe na máquina (o correto sería ~/bin/ls~)
++ portanto, ~execl~ não executou com sucesso, ou seja, o processo filho executa normalmente e no final não tem sua imagem trocada pelo processo que ~execl~ tería criado
+  - como o comando ~execl~ é o último a ser executado pelo filho (antes de ~exit~), se este fosse executado com sucesso, a comunicação entre pai e filho não sería corrompida e apenas teríamos a saída do comando ~ls~ junto com a nossa saída original
