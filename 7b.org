@@ -82,3 +82,26 @@ main() {
 + por causa do controle de fluxo, apenas o processo filho executa ~execl~, substituindo sua imagem pela imagem de ~ls~
 + por isso, o processo filho não irá executar nenhum comando do programa original após o ~execl~
 + portanto, vemos apenas um print ~Por que a função printf anterior não foi executada?~, nenhum print ~Quando este comando será executado?~, e um print do comando ~ls~
+
+* 4
+#+begin_src c :exports both
+main() {
+    int ret;
+    ret = fork();
+    if(ret == 0) {
+        execl("/bin/ll", "ll", 0);
+        printf("Por que este comando foi executado?\n");
+    }
+    printf("Processo continua executando.\n");
+}
+#+end_src
+
+#+results:
+: Processo continua executando.
+: Por que este comando foi executado?
+: Processo continua executando.
+
++ mais uma vez, temos o um exemplo de uso de ~execl()~ no processo filho
++ o que mudou neste caso é que não existe o arquivo ~/bin/ll~ e, portanto, o a função ~execl()~ falha
++ como resultado, temos que o processo filho falhou em substituir sua imagem e irá continuar executando o código original
++ assim, temos 2 prints ~Processo continua executando.~ e 1 print ~Por que este comando foi executado?~
