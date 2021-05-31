@@ -1,0 +1,31 @@
+#+TITLE: 7b - Exemplos de uso de fork() e exec()
+
+* 1
+#+begin_src c
+main() {
+    int ret1, ret2;
+    ret1 = fork();
+    ret2 = fork();
+    printf("Programa em execução.\n");
+}
+#+end_src
+
+#+results:
+: Programa em execução.
+: Programa em execução.
+: Programa em execução.
+: Programa em execução.
+
++ o programa original inicializa 2 inteiros ~ret1~ e ~ret2~
++ em seguida, o programa produz um processo novo usando ~fork()~
+  - temos um ~ret1~ no processo original, que recebeu o /PID/ do filho
+  - temos um ~ret1~ no processo filho, que recebeu 0
++ por fim, ambos o programa original e o filho criado no passo anterior criam um novo processo usando ~fork()~ e o mesmo comportamento se repete para o processo original e o primeiro filho criado
+  - *processo original* cria um segundo filho, ~ret2~ recebe o /PID/ deste processo
+  - *segundo filho* é criado, seu ~ret2~ recebe 0
+  - *primeiro filho* cria um terceiro filho, ~ret2~ recebe o /PID/ deste processo
+  - *terceiro filho* é criado, seu ~ret2~ recebe 0
++ Como resultado, temos 4 processos que printam
+  : Programa em execução.
+
+* 2
