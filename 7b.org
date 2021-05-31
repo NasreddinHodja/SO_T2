@@ -45,10 +45,10 @@ main() {
 : Processo continua executando.
 : a  a.c
 
-+ Temos um processo criando um filho usando ~fork()~
++ temos um processo criando um filho usando ~fork()~
   - ~ret~ do processo pai recebe o /PID/ do filho
   - ~ret~ do processo filho recebe 0
-+ Assim, através do controle de fluxo ~if else~ com condição ~(ret == 0)~ permite-se que a função ~execl()~ seja executada apenas no processo filho e substitui a imagem deste processo pela imagem do processo que executa o arquivo passado, com argumentos:
++ assim, através do controle de fluxo ~if else~ com condição ~(ret == 0)~ permite-se que a função ~execl()~ seja executada apenas no processo filho e substitui a imagem deste processo pela imagem do processo que executa o arquivo passado, com argumentos:
   1. ~"/bin/ls"~
      + como de costume com esta família de funções /exec/, o primeiro argumento é o nome do arquivo a ser executado, e o resto são argumentos para o arquivo a ser executado
      + no nosso caso, o comando ~ls~, situado na pasta ~/bin/~ (por convenção), é chamado
@@ -56,9 +56,9 @@ main() {
      + por convenção, o primeiro argumento é o nome do comando
   3. ~0~
      + indica o final da lista de argumentos para o comando ~ls~
-+ Por isto, o processo filho printa o conteúdo do diretório em que o programa foi executado:
++ por isto, o processo filho printa o conteúdo do diretório em que o programa foi executado:
   : a a.c
-+ O processo pai executa o bloco do ~else~, printando:
++ o processo pai executa o bloco do ~else~, printando:
   : Processo continua executando
 
 * 3
@@ -77,3 +77,8 @@ main() {
 #+results:
 : Por que a função printf anterior não foi executada?
 : a  a.c
+
++ aqui temos uma variação do programa anterior que explicita o funcionamento de ~execl~
++ por causa do controle de fluxo, apenas o processo filho executa ~execl~, substituindo sua imagem pela imagem de ~ls~
++ por isso, o processo filho não irá executar nenhum comando do programa original após o ~execl~
++ portanto, vemos apenas um print ~Por que a função printf anterior não foi executada?~, nenhum print ~Quando este comando será executado?~, e um print do comando ~ls~
