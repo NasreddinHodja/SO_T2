@@ -16,6 +16,8 @@ main() {
 : Programa em execução.
 : Programa em execução.
 
+*OBS*: A sequência inferida na nossa explicação não corresponde à ordem de execução dos comandos, mas sim à ordem dos comandos no código. Isto se aplica para o resto dos ítens do exercício.
+
 + o programa original inicializa 2 inteiros ~ret1~ e ~ret2~
 + em seguida, o programa produz um processo novo usando ~fork()~
   - temos um ~ret1~ no processo original, que recebeu o /PID/ do filho
@@ -25,6 +27,53 @@ main() {
   - *segundo filho* é criado, seu ~ret2~ recebe 0
   - *primeiro filho* cria um terceiro filho, ~ret2~ recebe o /PID/ deste processo
   - *terceiro filho* é criado, seu ~ret2~ recebe 0
-+ Como resultado, temos 4 processos que printam ~Programa em execução.~
++ como resultado, temos 4 processos que printam ~Programa em execução.~
 
 * 2
+#+begin_src c :exports both
+main() {
+    int ret;
+    ret = fork();
+    if(ret == 0)
+        execl("/bin/ls", "ls", 0);
+    else
+        printf("Processo continua executando.\n");
+}
+#+end_src
+
+#+results:
+: Processo continua executando.
+: a  a.c
+
++ Temos um processo criando um filho usando ~fork()~
+  - ~ret~ do processo pai recebe o /PID/ do filho
+  - ~ret~ do processo filho recebe 0
++ Assim, através do controle de fluxo ~if else~ com condição ~(ret == 0)~ permite-se que a função ~execl()~ seja executada apenas no processo filho e substitui a imagem deste processo pela imagem do processo que executa o arquivo passado, com argumentos:
+  1. ~"/bin/ls"~
+     + como de costume com esta família de funções /exec/, o primeiro argumento é o nome do arquivo a ser executado, e o resto são argumentos para o arquivo a ser executado
+     + no nosso caso, o comando ~ls~, situado na pasta ~/bin/~ (por convenção), é chamado
+  2. ~"ls"~
+     + por convenção, o primeiro argumento é o nome do comando
+  3. ~0~
+     + indica o final da lista de argumentos para o comando ~ls~
++ Por isto, o processo filho printa o conteúdo do diretório em que o programa foi executado:
+  : a a.c
++ O processo pai executa o bloco do ~else~, printando:
+  : Processo continua executando
+
+* 3
+#+begin_src c :exports both
+main() {
+    int ret;
+    ret = fork();
+    if(ret == 0) {
+        execl("/bin/ls", "ls", 0);
+        printf("Quando este comando será executado?\n");
+    }
+    printf("Por que a função printf anterior não foi executada?\n");
+}
+#+end_src
+
+#+results:
+: Por que a função printf anterior não foi executada?
+: a  a.c
