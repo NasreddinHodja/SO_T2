@@ -49,10 +49,10 @@ main() {
   - ~ret~ do processo pai recebe o /PID/ do filho
   - ~ret~ do processo filho recebe 0
 + assim, através do controle de fluxo ~if else~ com condição ~(ret == 0)~ permite-se que a função ~execl()~ seja executada apenas no processo filho e substitui a imagem deste processo pela imagem do processo que executa o arquivo passado, com argumentos:
-  1. ~"/bin/ls"~
-     + como de costume com esta família de funções /exec/, o primeiro argumento é o nome do arquivo a ser executado, e o resto são argumentos para o arquivo a ser executado
+  1. ~/bin/ls~
+     + como de costume com a família de funções /exec/, o primeiro argumento é o nome do arquivo a ser executado, e o resto são argumentos para o arquivo a ser executado
      + no nosso caso, o comando ~ls~, situado na pasta ~/bin/~ (por convenção), é chamado
-  2. ~"ls"~
+  2. ~ls~
      + por convenção, o primeiro argumento é o nome do comando
   3. ~0~
      + indica o final da lista de argumentos para o comando ~ls~
