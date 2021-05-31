@@ -25,7 +25,6 @@ main() {
   - *segundo filho* é criado, seu ~ret2~ recebe 0
   - *primeiro filho* cria um terceiro filho, ~ret2~ recebe o /PID/ deste processo
   - *terceiro filho* é criado, seu ~ret2~ recebe 0
-+ Como resultado, temos 4 processos que printam
-  : Programa em execução.
++ Como resultado, temos 4 processos que printam ~Programa em execução.~
 
 * 2
