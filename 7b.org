@@ -1,7 +1,7 @@
 #+TITLE: 7b - Exemplos de uso de fork() e exec()
 
 * 1
-#+begin_src c
+#+begin_src c :exports both
 main() {
     int ret1, ret2;
     ret1 = fork();
