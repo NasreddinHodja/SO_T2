@@ -80,11 +80,10 @@ int main(int argc, char** argv) {
         // parent
         wait(&status);
 
-        if(status == 0) {
+        if(status == 0)
             printf("[Executado com sucesso.]\n");
-        } else {
+        else
             printf("[Código de retorno = %d]\n", status);
-        }
 
         print_lambda(status, colored);
     }
