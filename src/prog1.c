@@ -1,7 +1,3 @@
-#+TITLE: 7c - Uso dos comandos fork() e exec()
-
-* prog1
-#+begin_src c :exports both
 #include <stdio.h>
 #include <wait.h>
 #include <unistd.h>
@@ -68,21 +64,3 @@ int main(void) {
 
     exit(0);
 }
-#+end_src
-
-#+results:
-: PID: 1799794
-: PID pai: 1799794 | PID filho: 1799795
-: mensagem para o filho: hello, child
-: *** PID: 1799795 | PPID: 1799794
-: *** mensagem recebida do pai: hello, child
-: mensagem recebida do filho: hello, parent
-: mensagem recebida do filho: j = 10001
-: filho terminou de executar, pai irá encerrar
-
-*OBS*: a ordem da linhas na saída pode variar, uma vez que os dois processos estão executando juntos
-
-+ podemos ver pela saída que não há a saída do comando ~ls~
-+ isto se dá pelo fato de que o caminho ~/Bin/ls~ não existe na máquina (o correto sería ~/bin/ls~)
-+ portanto, ~execl~ não executou com sucesso, ou seja, o processo filho executa normalmente e no final não tem sua imagem trocada pelo processo que ~execl~ tería criado
-  - como o comando ~execl~ é o último a ser executado pelo filho (antes de ~exit~), se este fosse executado com sucesso, a comunicação entre pai e filho não sería corrompida e apenas teríamos a saída do comando ~ls~ junto com a nossa saída original
