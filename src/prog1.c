@@ -7,13 +7,12 @@
 
 int main(void) {
     int id, j;
-    int pfd[2], cfd[2], n_bytes;
+    int ffd[2], cfd[2], n_bytes;
     char inbuf[MAX_MSG];
 
     printf("PID: %lu\n", getpid());
 
-
-    if(pipe(pfd) < 0)
+    if(pipe(ffd) < 0)
         exit(1);
     if(pipe(cfd) < 0)
         exit(1);
@@ -25,7 +24,7 @@ int main(void) {
         printf("PID pai: %lu | PID filho: %lu\n", getpid(), id);
 
         char msg_to_child[MAX_MSG] = "hello, child";
-        write(pfd[1], msg_to_child, MAX_MSG);
+        write(ffd[1], msg_to_child, MAX_MSG);
         printf("mensagem para o filho: %s\n", msg_to_child);
 
         while((n_bytes = read(cfd[0], inbuf, MAX_MSG)) < 0)
@@ -39,14 +38,14 @@ int main(void) {
         wait(NULL);
 
         printf("filho terminou de executar, pai irá encerrar\n");
-        close(pfd[1]);
+        close(ffd[1]);
     } else {
         // todo print do filho sera prefixado com "***"
         // para diferencia-lo de um print do pai
-        close(pfd[1]);
+        close(ffd[1]);
         printf("*** PID: %lu | PPID: %lu\n", getpid(), getppid());
 
-        while((n_bytes = read(pfd[0], inbuf, MAX_MSG)) < 0)
+        while((n_bytes = read(ffd[0], inbuf, MAX_MSG)) < 0)
             sleep(0.5);
         printf("*** mensagem recebida do pai: %s\n", inbuf);
 
